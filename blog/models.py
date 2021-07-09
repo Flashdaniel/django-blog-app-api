@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from django.template.defaultfilters import slugify
 
 
 class Category(models.Model):
@@ -24,7 +25,7 @@ class Post(models.Model):
     title = models.CharField(max_length=250)
     excerpt = models.TextField(null=True)
     content = models.TextField()
-    slug = models.SlugField(max_length=250, unique_for_date='published')
+    slug = models.SlugField(null=False, unique=True)
     published = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='blog_posts')
@@ -38,3 +39,8 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):  # new
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save(*args, **kwargs)
