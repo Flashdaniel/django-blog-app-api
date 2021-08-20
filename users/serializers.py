@@ -2,6 +2,12 @@ from rest_framework import serializers
 from .models import NewUser
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewUser
+        fields = '__all__'
+
+
 class RegisterUserSerializer(serializers.ModelSerializer):
 
     class Meta:

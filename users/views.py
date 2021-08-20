@@ -2,8 +2,16 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from .serializers import RegisterUserSerializer
+from .serializers import RegisterUserSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class CurrentUser(APIView):
+    def get(self, request):
+        if request.user:
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 class CustomUserCreate(APIView):
@@ -28,3 +36,4 @@ class BlacklistTokenView(APIView):
             token.blacklist()
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
